@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"net"
 
-	client "github.com/inconshreveable/go-tunnel/client"
+	client "github.com/lagerstrom/go-tunnel/client"
 	"github.com/inconshreveable/muxado"
 	"github.com/inconshreveable/muxado/frame"
 )
