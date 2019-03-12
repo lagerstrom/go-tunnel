@@ -6,11 +6,18 @@ import (
 
 	client "github.com/inconshreveable/go-tunnel/client"
 	"github.com/inconshreveable/muxado"
+	"github.com/inconshreveable/muxado/frame"
 )
 
 // Client starts a new go-tunnel session on conn
 func Client(conn net.Conn) *client.Session {
-	return client.NewSession(muxado.Client(conn))
+	muxadoDefaultConfig := muxado.Config{
+		MaxWindowSize: 0x40000,
+		AcceptBacklog: 128,
+		NewFramer: frame.NewFramer,
+	}
+
+	return client.NewSession(muxado.Client(conn, &muxadoDefaultConfig))
 }
 
 // Dial starts a go-tunnel session on a new connection to addr

@@ -11,10 +11,18 @@ import (
 
 	"github.com/inconshreveable/muxado"
 	"golang.org/x/net/proxy"
+	"github.com/inconshreveable/muxado/frame"
 )
 
 func SOCKS5Dialer(network, proxyAddr, user, password, addr string, tlsConfig *tls.Config) func() (muxado.Session, error) {
 	return func() (muxado.Session, error) {
+
+		muxadoDefaultConfig := muxado.Config{
+			MaxWindowSize: 0x40000,
+			AcceptBacklog: 128,
+			NewFramer: frame.NewFramer,
+		}
+
 		proxyAuth := &proxy.Auth{User: user, Password: password}
 
 		proxyDialer, err := proxy.SOCKS5(network, proxyAddr, proxyAuth, proxy.Direct)
@@ -30,7 +38,7 @@ func SOCKS5Dialer(network, proxyAddr, user, password, addr string, tlsConfig *tl
 		// upgrade to TLS
 		conn = tls.Client(conn, tlsConfig)
 
-		return muxado.Client(conn), nil
+		return muxado.Client(conn, &muxadoDefaultConfig), nil
 	}
 }
 
