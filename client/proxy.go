@@ -99,6 +99,12 @@ func HTTPDialer(network, proxyUrl, addr string, tlsConfig *tls.Config) func() (m
 		// upgrade to TLS
 		conn = tls.Client(conn, tlsConfig)
 
-		return muxado.Client(conn), nil
+		muxadoDefaultConfig := muxado.Config{
+			MaxWindowSize: 0x40000,
+			AcceptBacklog: 128,
+			NewFramer: frame.NewFramer,
+		}
+
+		return muxado.Client(conn, &muxadoDefaultConfig), nil
 	}
 }
